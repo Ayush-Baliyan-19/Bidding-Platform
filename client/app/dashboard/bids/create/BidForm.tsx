@@ -7,15 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { api } from "@/lib/utils";
+import { BidFormFields } from "@/types/bid";
 
 export default function BidForm() {
-  const [form, setForm] = useState({
-    material: "",
-    quantity: "",
-    pickup: "",
-    delivery: "",
+  const [form, setForm] = useState<BidFormFields>({
+    material_type: "",
+    quantity: 0,
+    pickup_location: "",
+    delivery_location: "",
     deadline: "",
-    requirements: "",
+    transporter_requirements: "",
   });
 
   const [basePrice, setBasePrice] = useState("₹0");
@@ -26,10 +28,10 @@ export default function BidForm() {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
 
-    if (["quantity", "pickup", "delivery"].includes(name)) {
+    if (["quantity", "pickup", "delivery", ""].includes(name)) {
       const quantity =
         name === "quantity" ? Number(value) : Number(form.quantity);
-      if (form.pickup && form.delivery && quantity) {
+      if (form.pickup_location && form.delivery_location && quantity) {
         const price = 200 * 5 * quantity;
         setBasePrice(`₹${price}`);
       }
@@ -43,13 +45,14 @@ export default function BidForm() {
       basePrice: Number(basePrice.replace("₹", "")),
     };
 
-    const res = await fetch("http://localhost:5000/api/bids", {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: { "Content-Type": "application/json" },
+    const res = await api.post("/bids", payload, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
     });
 
-    if (res.ok) {
+    if (res.status === 201) {
       toast.success("Bid created successfully!");
       window.location.reload();
     } else {
@@ -60,31 +63,37 @@ export default function BidForm() {
   return (
     <Card className="max-w-xl">
       <CardContent className="space-y-4 pt-6">
-        {["material", "quantity", "pickup", "delivery", "deadline"].map(
-          (field) => (
-            <div key={field} className="space-y-2">
-              <Label>{field[0].toUpperCase() + field.slice(1)}</Label>
-              <Input
-                name={field}
-                type={
-                  field === "quantity"
-                    ? "number"
-                    : field === "deadline"
-                    ? "date"
-                    : "text"
-                }
-                value={(form as any)[field]}
-                onChange={handleChange}
-              />
-            </div>
-          )
-        )}
+        {(
+          [
+            "material_type",
+            "quantity",
+            "pickup_location",
+            "delivery_location",
+            "deadline",
+          ] as (keyof BidFormFields)[]
+        ).map((field) => (
+          <div key={field} className="space-y-2">
+            <Label>{field[0].toUpperCase() + field.slice(1)}</Label>
+            <Input
+              name={field}
+              type={
+                field === "quantity"
+                  ? "number"
+                  : field === "deadline"
+                  ? "date"
+                  : "text"
+              }
+              value={form[field]}
+              onChange={handleChange}
+            />
+          </div>
+        ))}
 
         <div className="space-y-2">
           <Label>Transporter Requirements</Label>
           <Textarea
-            name="requirements"
-            value={form.requirements}
+            name="transporter_requirements"
+            value={form.transporter_requirements}
             onChange={handleChange}
           />
         </div>
