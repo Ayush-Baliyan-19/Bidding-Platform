@@ -1,320 +1,410 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   TruckIcon,
-  ClipboardListIcon,
-  HandshakeIcon,
-  TrendingUpIcon,
-  PlusIcon,
-  EyeIcon,
-  FileTextIcon,
+  BarChart3Icon,
+  ClipboardCheckIcon,
+  PackageIcon,
   UsersIcon,
+  PlusIcon,
+  TrendingUpIcon,
+  ClockIcon,
+  CheckCircleIcon,
+  AlertCircleIcon,
+  DollarSignIcon,
 } from "lucide-react";
 
-// Mock data - replace with actual API calls
-const mockStats = {
-  activeBids: 24,
-  totalTransporters: 156,
-  dealsThisMonth: 89,
-  revenue: 2850000,
-};
-
-const mockRecentBids = [
-  { id: 1, material: "Steel Rods", quantity: 15, status: "open", offers: 3 },
-  { id: 2, material: "Cement", quantity: 25, status: "accepted", offers: 7 },
-  { id: 3, material: "Sand", quantity: 40, status: "open", offers: 2 },
-];
-
-const mockRecentDeals = [
-  {
-    id: 1,
-    material: "Bricks",
-    amount: 45000,
-    transporter: "Mumbai Logistics",
-    date: "2025-05-30",
-  },
-  {
-    id: 2,
-    material: "Gravel",
-    amount: 32000,
-    transporter: "Express Freight",
-    date: "2025-05-29",
-  },
-  {
-    id: 3,
-    material: "Concrete",
-    amount: 78000,
-    transporter: "Swift Transport",
-    date: "2025-05-28",
-  },
-];
-
-export default function DashboardHome() {
-  const [currentTime, setCurrentTime] = useState(new Date());
-
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const getGreeting = () => {
-    const hour = currentTime.getHours();
-    if (hour < 12) return "Good Morning";
-    if (hour < 17) return "Good Afternoon";
-    return "Good Evening";
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
-
+export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 p-6">
-      {/* Hero Section */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-              {getGreeting()}! 👋
-            </h1>
-            <p className="text-xl text-gray-600 mt-2">
-              Welcome to your Freight Management Hub
-            </p>
-            <p className="text-sm text-gray-500">
-              {currentTime.toLocaleDateString("en-IN", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}{" "}
-              • {currentTime.toLocaleTimeString("en-IN")}
-            </p>
-          </div>
-          <div className="hidden md:block">
-            <div className="w-32 h-32 bg-gradient-to-br from-blue-100 to-green-100 rounded-full flex items-center justify-center">
-              <TruckIcon className="w-16 h-16 text-blue-600" />
+    <div className="min-h-screen bg-slate-50">
+      {/* Header */}
+      <header className="bg-white border-b border-slate-200 shadow-sm">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-md flex items-center justify-center">
+              <TruckIcon className="w-6 h-6 text-white" />
             </div>
+            <span className="text-2xl font-bold text-slate-800">
+              FreightFlow
+            </span>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Button variant="outline">Documentation</Button>
+            <Button
+              className="bg-gradient-to-r from-blue-600 to-cyan-600"
+              onClick={() => (window.location.href = "/login")}
+            >
+              Access Platform
+            </Button>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-blue-100 text-sm font-medium">Active Bids</p>
-                <p className="text-3xl font-bold">{mockStats.activeBids}</p>
-                <p className="text-blue-100 text-xs mt-1">+3 from yesterday</p>
-              </div>
-              <ClipboardListIcon className="w-8 h-8 text-blue-200" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-green-100 text-sm font-medium">
-                  Transporters
-                </p>
-                <p className="text-3xl font-bold">
-                  {mockStats.totalTransporters}
-                </p>
-                <p className="text-green-100 text-xs mt-1">142 active</p>
-              </div>
-              <TruckIcon className="w-8 h-8 text-green-200" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-purple-100 text-sm font-medium">
-                  Deals This Month
-                </p>
-                <p className="text-3xl font-bold">{mockStats.dealsThisMonth}</p>
-                <p className="text-purple-100 text-xs mt-1">
-                  +12% from last month
-                </p>
-              </div>
-              <HandshakeIcon className="w-8 h-8 text-purple-200" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-orange-100 text-sm font-medium">Revenue</p>
-                <p className="text-2xl font-bold">
-                  {formatCurrency(mockStats.revenue)}
-                </p>
-                <p className="text-orange-100 text-xs mt-1">This month</p>
-              </div>
-              <TrendingUpIcon className="w-8 h-8 text-orange-200" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Quick Actions */}
-      <Card className="mb-8 shadow-lg border-0">
-        <CardHeader>
-          <CardTitle className="text-xl font-semibold text-gray-800">
-            Quick Actions
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Button className="h-20 flex flex-col items-center justify-center bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-300">
-              <PlusIcon className="w-6 h-6 mb-2" />
-              <span className="text-sm font-medium">Create Bid</span>
-            </Button>
-            <Button className="h-20 flex flex-col items-center justify-center bg-green-600 hover:bg-green-700 text-white shadow-md hover:shadow-lg transition-all duration-300">
-              <EyeIcon className="w-6 h-6 mb-2" />
-              <span className="text-sm font-medium">View Offers</span>
-            </Button>
-            <Button className="h-20 flex flex-col items-center justify-center bg-purple-600 hover:bg-purple-700 text-white shadow-md hover:shadow-lg transition-all duration-300">
-              <FileTextIcon className="w-6 h-6 mb-2" />
-              <span className="text-sm font-medium">Log Deal</span>
-            </Button>
-            <Button className="h-20 flex flex-col items-center justify-center bg-orange-600 hover:bg-orange-700 text-white shadow-md hover:shadow-lg transition-all duration-300">
-              <UsersIcon className="w-6 h-6 mb-2" />
-              <span className="text-sm font-medium">Manage Transporters</span>
+      <main className="container mx-auto px-4 py-8">
+        {/* Hero Section */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4">
+            Freight Operations
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600">
+              Command Center
+            </span>
+          </h1>
+          <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-8">
+            Streamline your bidding process, manage transporters efficiently,
+            and gain actionable insights into your freight operations with our
+            comprehensive management platform.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-blue-600 to-cyan-600 px-8"
+            >
+              <PlusIcon className="mr-2 h-5 w-5" />
+              Create New Bid
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Bids */}
-        <Card className="shadow-lg border-0">
-          <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-t-lg">
-            <CardTitle className="text-lg font-semibold flex items-center">
-              <ClipboardListIcon className="w-5 h-5 mr-2" />
-              Recent Bids
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="divide-y divide-gray-100">
-              {mockRecentBids.map((bid) => (
-                <div
-                  key={bid.id}
-                  className="p-4 hover:bg-gray-50 transition-colors duration-200"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-gray-900">
-                      {bid.material}
-                    </h4>
-                    <Badge
-                      variant={
-                        bid.status === "accepted" ? "default" : "secondary"
-                      }
-                      className={
-                        bid.status === "accepted"
-                          ? "bg-green-100 text-green-700"
-                          : ""
-                      }
-                    >
-                      {bid.status}
-                    </Badge>
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-blue-600 text-sm font-medium">
+                    Active Bids
+                  </p>
+                  <p className="text-3xl font-bold text-blue-800">24</p>
+                  <p className="text-blue-600 text-xs">+3 from yesterday</p>
+                </div>
+                <ClipboardCheckIcon className="h-12 w-12 text-blue-600 opacity-80" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-green-600 text-sm font-medium">
+                    Completed Deals
+                  </p>
+                  <p className="text-3xl font-bold text-green-800">156</p>
+                  <p className="text-green-600 text-xs">This month</p>
+                </div>
+                <CheckCircleIcon className="h-12 w-12 text-green-600 opacity-80" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-amber-600 text-sm font-medium">
+                    Active Transporters
+                  </p>
+                  <p className="text-3xl font-bold text-amber-800">89</p>
+                  <p className="text-amber-600 text-xs">Verified partners</p>
+                </div>
+                <TruckIcon className="h-12 w-12 text-amber-600 opacity-80" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-purple-600 text-sm font-medium">Revenue</p>
+                  <p className="text-3xl font-bold text-purple-800">₹2.4M</p>
+                  <p className="text-purple-600 text-xs">+12% this quarter</p>
+                </div>
+                <DollarSignIcon className="h-12 w-12 text-purple-600 opacity-80" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column - Recent Activity */}
+          <div className="lg:col-span-2 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  Recent Bid Activity
+                  <Button variant="outline" size="sm">
+                    View All
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <PackageIcon className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-slate-800">
+                          Steel Coils - Mumbai to Delhi
+                        </p>
+                        <p className="text-sm text-slate-500">
+                          25 tons • Deadline: 3 days
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <Badge variant="secondary">5 Offers</Badge>
+                      <p className="text-sm text-slate-500 mt-1">
+                        ₹45,000 - ₹52,000
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between text-sm text-gray-600">
-                    <span>{bid.quantity} tons</span>
-                    <span>{bid.offers} offers</span>
+
+                  <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <CheckCircleIcon className="w-5 h-5 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-slate-800">
+                          Cement - Pune to Bangalore
+                        </p>
+                        <p className="text-sm text-slate-500">
+                          40 tons • Completed
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <Badge className="bg-green-100 text-green-800">
+                        Delivered
+                      </Badge>
+                      <p className="text-sm text-slate-500 mt-1">₹38,500</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                        <ClockIcon className="w-5 h-5 text-amber-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-slate-800">
+                          Electronics - Chennai to Hyderabad
+                        </p>
+                        <p className="text-sm text-slate-500">
+                          15 tons • In Transit
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <Badge variant="outline">In Progress</Badge>
+                      <p className="text-sm text-slate-500 mt-1">₹28,000</p>
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
-            <div className="p-4 bg-gray-50 rounded-b-lg">
-              <Button variant="outline" className="w-full">
-                View All Bids
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
 
-        {/* Recent Deals */}
-        <Card className="shadow-lg border-0">
-          <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-t-lg">
-            <CardTitle className="text-lg font-semibold flex items-center">
-              <HandshakeIcon className="w-5 h-5 mr-2" />
-              Recent Deals
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="divide-y divide-gray-100">
-              {mockRecentDeals.map((deal) => (
-                <div
-                  key={deal.id}
-                  className="p-4 hover:bg-gray-50 transition-colors duration-200"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-gray-900">
-                      {deal.material}
-                    </h4>
-                    <span className="font-semibold text-green-600">
-                      {formatCurrency(deal.amount)}
-                    </span>
+            <Card>
+              <CardHeader>
+                <CardTitle>Performance Overview</CardTitle>
+                <CardDescription>Key metrics for this month</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm text-slate-600">
+                        Bid Success Rate
+                      </span>
+                      <span className="text-sm font-medium">78%</span>
+                    </div>
+                    <div className="w-full bg-slate-200 rounded-full h-2">
+                      <div
+                        className="bg-green-500 h-2 rounded-full"
+                        style={{ width: "78%" }}
+                      ></div>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between text-sm text-gray-600">
-                    <span>{deal.transporter}</span>
-                    <span>
-                      {new Date(deal.date).toLocaleDateString("en-IN")}
-                    </span>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm text-slate-600">
+                        On-Time Delivery
+                      </span>
+                      <span className="text-sm font-medium">85%</span>
+                    </div>
+                    <div className="w-full bg-slate-200 rounded-full h-2">
+                      <div
+                        className="bg-blue-500 h-2 rounded-full"
+                        style={{ width: "85%" }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm text-slate-600">
+                        Cost Efficiency
+                      </span>
+                      <span className="text-sm font-medium">92%</span>
+                    </div>
+                    <div className="w-full bg-slate-200 rounded-full h-2">
+                      <div
+                        className="bg-purple-500 h-2 rounded-full"
+                        style={{ width: "92%" }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm text-slate-600">
+                        Transporter Rating
+                      </span>
+                      <span className="text-sm font-medium">4.6/5</span>
+                    </div>
+                    <div className="w-full bg-slate-200 rounded-full h-2">
+                      <div
+                        className="bg-amber-500 h-2 rounded-full"
+                        style={{ width: "92%" }}
+                      ></div>
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
-            <div className="p-4 bg-gray-50 rounded-b-lg">
-              <Button variant="outline" className="w-full">
-                View All Deals
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+              </CardContent>
+            </Card>
+          </div>
 
-      {/* Performance Insights */}
-      <Card className="mt-6 shadow-lg border-0 bg-gradient-to-r from-indigo-50 to-purple-50">
-        <CardContent className="p-6">
-          <div className="flex items-center mb-4">
-            <TrendingUpIcon className="w-6 h-6 text-indigo-600 mr-2" />
-            <h3 className="text-lg font-semibold text-gray-800">
-              Performance Insights
-            </h3>
+          {/* Right Column - Quick Actions & Alerts */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Quick Actions</CardTitle>
+                <CardDescription>Common tasks and shortcuts</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button className="w-full justify-start" variant="outline">
+                  <PlusIcon className="mr-2 h-4 w-4" />
+                  Create New Bid
+                </Button>
+                <Button className="w-full justify-start" variant="outline">
+                  <TruckIcon className="mr-2 h-4 w-4" />
+                  Add Transporter
+                </Button>
+                <Button className="w-full justify-start" variant="outline">
+                  <PackageIcon className="mr-2 h-4 w-4" />
+                  Log Manual Deal
+                </Button>
+                <Button className="w-full justify-start" variant="outline">
+                  <BarChart3Icon className="mr-2 h-4 w-4" />
+                  Generate Report
+                </Button>
+                <Button className="w-full justify-start" variant="outline">
+                  <UsersIcon className="mr-2 h-4 w-4" />
+                  Manage Users
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <AlertCircleIcon className="mr-2 h-5 w-5 text-amber-500" />
+                  Alerts & Notifications
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                  <p className="text-sm font-medium text-amber-800">
+                    Bid Expiring Soon
+                  </p>
+                  <p className="text-xs text-amber-600">
+                    Steel shipment bid expires in 2 hours
+                  </p>
+                </div>
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-sm font-medium text-blue-800">
+                    New Transporter Request
+                  </p>
+                  <p className="text-xs text-blue-600">
+                    3 new transporters pending approval
+                  </p>
+                </div>
+                <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-sm font-medium text-green-800">
+                    Monthly Target Achieved
+                  </p>
+                  <p className="text-xs text-green-600">
+                    Congratulations! 105% of target reached
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <TrendingUpIcon className="mr-2 h-5 w-5 text-green-500" />
+                  Market Insights
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm text-slate-600">
+                        Mumbai-Delhi Route
+                      </span>
+                      <span className="text-sm font-medium text-green-600">
+                        ↑ 5%
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500">
+                      Average rate: ₹1,850/ton
+                    </p>
+                  </div>
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm text-slate-600">
+                        Chennai-Bangalore Route
+                      </span>
+                      <span className="text-sm font-medium text-red-600">
+                        ↓ 2%
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500">
+                      Average rate: ₹1,420/ton
+                    </p>
+                  </div>
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm text-slate-600">
+                        Pune-Hyderabad Route
+                      </span>
+                      <span className="text-sm font-medium text-slate-600">
+                        → 0%
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500">
+                      Average rate: ₹1,650/ton
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-            <div className="bg-white rounded-lg p-4 shadow-sm">
-              <p className="text-2xl font-bold text-indigo-600">92%</p>
-              <p className="text-sm text-gray-600">Bid Acceptance Rate</p>
-            </div>
-            <div className="bg-white rounded-lg p-4 shadow-sm">
-              <p className="text-2xl font-bold text-purple-600">4.2 days</p>
-              <p className="text-sm text-gray-600">Avg. Bid Duration</p>
-            </div>
-            <div className="bg-white rounded-lg p-4 shadow-sm">
-              <p className="text-2xl font-bold text-green-600">₹1,847</p>
-              <p className="text-sm text-gray-600">Avg. Deal Value per Ton</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      </main>
     </div>
   );
 }

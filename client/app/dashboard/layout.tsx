@@ -3,7 +3,7 @@
 
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +16,9 @@ import {
   LogOut,
   Menu,
   X,
+  User,
 } from "lucide-react";
+
 
 interface SidebarItemProps {
   title: string;
@@ -27,13 +29,13 @@ interface SidebarItemProps {
 
 function SidebarItem({ title, icon, href, children }: SidebarItemProps) {
   const [isOpen, setIsOpen] = useState(false);
-
+  
   if (href && !children) {
     return (
       <Link
         href={href}
         className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
-      >
+        >
         {icon}
         <span className="font-medium">{title}</span>
       </Link>
@@ -61,7 +63,7 @@ function SidebarItem({ title, icon, href, children }: SidebarItemProps) {
               key={child.href}
               href={child.href}
               className="block px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
-            >
+              >
               {child.title}
             </Link>
           ))}
@@ -76,7 +78,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { authUser, logout } = useAuth();
+  const { authUser, logout, routes: allowedRoutes } = useAuth();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -90,6 +92,71 @@ export default function DashboardLayout({
     }
   };
 
+  const sidebarItems: SidebarItemProps[] = useMemo(() => {
+    const hasAccess = (path: string) => allowedRoutes.includes(path);
+
+    const items: SidebarItemProps[] = [
+      {
+        title: "Dashboard",
+        icon: <Home size={20} />,
+        href: "/dashboard",
+      },
+      {
+        title: "Bids",
+        icon: <Package size={20} />,
+        children: [
+          { title: "Active Bids", href: "/dashboard/bids/active" },
+          { title: "Create Bid", href: "/dashboard/bids/create" },
+        ],
+      },
+      {
+        title: "Deals",
+        icon: <FileText size={20} />,
+        children: [
+          { title: "All Deals", href: "/dashboard/deals/all-deals" },
+          { title: "Manual Entry", href: "/dashboard/deals/manual" },
+          { title: "Upload CSV", href: "/dashboard/deals/upload" },
+        ],
+      },
+      {
+        title: "Transporters",
+        icon: <Truck size={20} />,
+        children: [
+          { title: "All Transporters", href: "/dashboard/transporters" },
+          { title: "Add Transporter", href: "/dashboard/transporters/create" },
+        ],
+      },
+      {
+        title: "Users",
+        icon: <User size={20} />,
+        children: [
+          { title: "Manage Staff", href: "/dashboard/users/manage" },
+          { title: "Add new staff", href: "/dashboard/users/create" },
+        ],
+      },
+    ];
+
+    // Filter based on access
+    return items
+      .map((item) => {
+        if (item.href && hasAccess(item.href)) {
+          return item;
+        }
+
+        if (item.children) {
+          const filteredChildren = item.children.filter((child) =>
+            hasAccess(child.href)
+          );
+          if (filteredChildren.length > 0) {
+            return { ...item, children: filteredChildren };
+          }
+        }
+
+        return null;
+      })
+      .filter(Boolean) as SidebarItemProps[];
+  }, [allowedRoutes]);
+  
   if (!authUser) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -100,39 +167,7 @@ export default function DashboardLayout({
       </div>
     );
   }
-
-  const sidebarItems: SidebarItemProps[] = [
-    {
-      title: "Dashboard",
-      icon: <Home size={20} />,
-      href: "/dashboard",
-    },
-    {
-      title: "Bids",
-      icon: <Package size={20} />,
-      children: [
-        { title: "Active Bids", href: "/dashboard/bids/active" },
-        { title: "Create Bid", href: "/dashboard/bids/create" },
-      ],
-    },
-    {
-      title: "Deals",
-      icon: <FileText size={20} />,
-      children: [
-        { title: "All Deals", href: "/dashboard/deals/all-deals" },
-        { title: "Manual Entry", href: "/dashboard/deals/manual" },
-        { title: "Upload CSV", href: "/dashboard/deals/upload" },
-      ],
-    },
-    {
-      title: "Transporters",
-      icon: <Truck size={20} />,
-      children: [
-        { title: "All Transporters", href: "/dashboard/transporters" },
-        { title: "Add Transporter", href: "/dashboard/transporters/create" },
-      ],
-    },
-  ];
+  
 
   return (
     <div className="min-h-screen flex bg-gray-50">

@@ -1,7 +1,14 @@
 "use client";
-import { createContext, useContext, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  ReactNode,
+  useEffect,
+  useState,
+} from "react";
 import useFirebaseAuth from "../lib/useFirebaseAuth";
 import signOutFromApplication from "@/lib/auth";
+import { api } from "@/lib/utils"; // your axios instance
 
 type AuthUser = {
   uid: string;
@@ -12,7 +19,8 @@ type AuthUser = {
 type AuthContextType = {
   authUser: AuthUser | null;
   loading: boolean;
-  logout: () => Promise<void>; 
+  logout: () => Promise<void>;
+  routes: string[]; // expose allowed routes
 };
 
 const AuthUserContext = createContext<AuthContextType>({
@@ -21,26 +29,52 @@ const AuthUserContext = createContext<AuthContextType>({
   logout: async () => {
     signOutFromApplication();
   },
+  routes: [], // default
 });
 
 export function AuthUserProvider({ children }: { children: ReactNode }) {
   const auth = useFirebaseAuth();
+  const [routes, setRoutes] = useState<string[]>([]);
 
-  // Ensure logout is present in the context value
   const logout = async () => {
     await signOutFromApplication();
   };
+
+  useEffect(() => {
+    const fetchRoutes = async () => {
+      if (auth.authUser) {
+        try {
+          const res = await api.get("/auth/routes", {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${auth.authUser.token}`,
+            },
+          });
+          setRoutes(res.data.routes || []);
+        } catch (err) {
+          console.error("Failed to fetch routes", err);
+          setRoutes([]);
+        }
+      } else {
+        setRoutes([]);
+      }
+    };
+
+    fetchRoutes();
+  }, [auth.authUser]);
 
   const contextValue: AuthContextType = {
     authUser: auth.authUser,
     loading: auth.loading,
     logout,
+    routes,
   };
 
   return (
-    <AuthUserContext.Provider value={contextValue}>{children}</AuthUserContext.Provider>
+    <AuthUserContext.Provider value={contextValue}>
+      {children}
+    </AuthUserContext.Provider>
   );
 }
 
-// custom hook to use the AuthUserContext and access authUser and loading
 export const useAuth = () => useContext(AuthUserContext);
