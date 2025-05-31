@@ -1,14 +1,12 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import BidOffersDialog from "./BidOffersDialog";
+import BidOffersDialog from "./components/BidOffersDialog";
 import { Bid } from "@/types/bid";
-import StatusBadge from "./StatusBadge";
+import StatusBadge from "./components/StatusBadge";
 import { toast } from "sonner";
 import { api } from "@/lib/utils";
-import CloseConfirmedButton from "./CloseConfirmedButton";
-
-
+import CloseConfirmedButton from "./components/CloseConfirmedButton";
 
 const closeBid = async (bidId: string | number) => {
   try {
@@ -72,12 +70,18 @@ export default function BidsTable({ bids }: { bids: Bid[] }) {
                     >
                       View Offers
                     </Button>
-                    <CloseConfirmedButton
-                    onClose={()=>closeBid(bid.id)}
-                    />
+                    <CloseConfirmedButton onClose={() => closeBid(bid.id)} />
                   </>
+                ) : bid.status === "closed" ? (
+                  <div className="flex items-center">
+                    <hr className="h-0.5 w-14 bg-black flex justify-center" />
+                    <p className="w-max mx-5">N/A</p>
+                    <hr className="h-0.5 w-14 bg-black flex justify-center" />
+                  </div>
                 ) : (
-                  <span className="text-gray-500">N/A</span>
+                  <Button onClick={() => setSelectedBid(bid)}>
+                    Mark as Deal
+                  </Button>
                 )}
               </td>
             </tr>

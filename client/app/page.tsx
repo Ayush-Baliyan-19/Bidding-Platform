@@ -1,103 +1,320 @@
-import Image from "next/image";
+"use client";
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  TruckIcon,
+  ClipboardListIcon,
+  HandshakeIcon,
+  TrendingUpIcon,
+  PlusIcon,
+  EyeIcon,
+  FileTextIcon,
+  UsersIcon,
+} from "lucide-react";
 
-export default function Home() {
+// Mock data - replace with actual API calls
+const mockStats = {
+  activeBids: 24,
+  totalTransporters: 156,
+  dealsThisMonth: 89,
+  revenue: 2850000,
+};
+
+const mockRecentBids = [
+  { id: 1, material: "Steel Rods", quantity: 15, status: "open", offers: 3 },
+  { id: 2, material: "Cement", quantity: 25, status: "accepted", offers: 7 },
+  { id: 3, material: "Sand", quantity: 40, status: "open", offers: 2 },
+];
+
+const mockRecentDeals = [
+  {
+    id: 1,
+    material: "Bricks",
+    amount: 45000,
+    transporter: "Mumbai Logistics",
+    date: "2025-05-30",
+  },
+  {
+    id: 2,
+    material: "Gravel",
+    amount: 32000,
+    transporter: "Express Freight",
+    date: "2025-05-29",
+  },
+  {
+    id: 3,
+    material: "Concrete",
+    amount: 78000,
+    transporter: "Swift Transport",
+    date: "2025-05-28",
+  },
+];
+
+export default function DashboardHome() {
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const getGreeting = () => {
+    const hour = currentTime.getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 17) return "Good Afternoon";
+    return "Good Evening";
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 p-6">
+      {/* Hero Section */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+              {getGreeting()}! 👋
+            </h1>
+            <p className="text-xl text-gray-600 mt-2">
+              Welcome to your Freight Management Hub
+            </p>
+            <p className="text-sm text-gray-500">
+              {currentTime.toLocaleDateString("en-IN", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}{" "}
+              • {currentTime.toLocaleTimeString("en-IN")}
+            </p>
+          </div>
+          <div className="hidden md:block">
+            <div className="w-32 h-32 bg-gradient-to-br from-blue-100 to-green-100 rounded-full flex items-center justify-center">
+              <TruckIcon className="w-16 h-16 text-blue-600" />
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-blue-100 text-sm font-medium">Active Bids</p>
+                <p className="text-3xl font-bold">{mockStats.activeBids}</p>
+                <p className="text-blue-100 text-xs mt-1">+3 from yesterday</p>
+              </div>
+              <ClipboardListIcon className="w-8 h-8 text-blue-200" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-green-100 text-sm font-medium">
+                  Transporters
+                </p>
+                <p className="text-3xl font-bold">
+                  {mockStats.totalTransporters}
+                </p>
+                <p className="text-green-100 text-xs mt-1">142 active</p>
+              </div>
+              <TruckIcon className="w-8 h-8 text-green-200" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-purple-100 text-sm font-medium">
+                  Deals This Month
+                </p>
+                <p className="text-3xl font-bold">{mockStats.dealsThisMonth}</p>
+                <p className="text-purple-100 text-xs mt-1">
+                  +12% from last month
+                </p>
+              </div>
+              <HandshakeIcon className="w-8 h-8 text-purple-200" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-orange-100 text-sm font-medium">Revenue</p>
+                <p className="text-2xl font-bold">
+                  {formatCurrency(mockStats.revenue)}
+                </p>
+                <p className="text-orange-100 text-xs mt-1">This month</p>
+              </div>
+              <TrendingUpIcon className="w-8 h-8 text-orange-200" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Quick Actions */}
+      <Card className="mb-8 shadow-lg border-0">
+        <CardHeader>
+          <CardTitle className="text-xl font-semibold text-gray-800">
+            Quick Actions
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Button className="h-20 flex flex-col items-center justify-center bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-300">
+              <PlusIcon className="w-6 h-6 mb-2" />
+              <span className="text-sm font-medium">Create Bid</span>
+            </Button>
+            <Button className="h-20 flex flex-col items-center justify-center bg-green-600 hover:bg-green-700 text-white shadow-md hover:shadow-lg transition-all duration-300">
+              <EyeIcon className="w-6 h-6 mb-2" />
+              <span className="text-sm font-medium">View Offers</span>
+            </Button>
+            <Button className="h-20 flex flex-col items-center justify-center bg-purple-600 hover:bg-purple-700 text-white shadow-md hover:shadow-lg transition-all duration-300">
+              <FileTextIcon className="w-6 h-6 mb-2" />
+              <span className="text-sm font-medium">Log Deal</span>
+            </Button>
+            <Button className="h-20 flex flex-col items-center justify-center bg-orange-600 hover:bg-orange-700 text-white shadow-md hover:shadow-lg transition-all duration-300">
+              <UsersIcon className="w-6 h-6 mb-2" />
+              <span className="text-sm font-medium">Manage Transporters</span>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Recent Bids */}
+        <Card className="shadow-lg border-0">
+          <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-t-lg">
+            <CardTitle className="text-lg font-semibold flex items-center">
+              <ClipboardListIcon className="w-5 h-5 mr-2" />
+              Recent Bids
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="divide-y divide-gray-100">
+              {mockRecentBids.map((bid) => (
+                <div
+                  key={bid.id}
+                  className="p-4 hover:bg-gray-50 transition-colors duration-200"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium text-gray-900">
+                      {bid.material}
+                    </h4>
+                    <Badge
+                      variant={
+                        bid.status === "accepted" ? "default" : "secondary"
+                      }
+                      className={
+                        bid.status === "accepted"
+                          ? "bg-green-100 text-green-700"
+                          : ""
+                      }
+                    >
+                      {bid.status}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between text-sm text-gray-600">
+                    <span>{bid.quantity} tons</span>
+                    <span>{bid.offers} offers</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="p-4 bg-gray-50 rounded-b-lg">
+              <Button variant="outline" className="w-full">
+                View All Bids
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Recent Deals */}
+        <Card className="shadow-lg border-0">
+          <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-t-lg">
+            <CardTitle className="text-lg font-semibold flex items-center">
+              <HandshakeIcon className="w-5 h-5 mr-2" />
+              Recent Deals
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="divide-y divide-gray-100">
+              {mockRecentDeals.map((deal) => (
+                <div
+                  key={deal.id}
+                  className="p-4 hover:bg-gray-50 transition-colors duration-200"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium text-gray-900">
+                      {deal.material}
+                    </h4>
+                    <span className="font-semibold text-green-600">
+                      {formatCurrency(deal.amount)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm text-gray-600">
+                    <span>{deal.transporter}</span>
+                    <span>
+                      {new Date(deal.date).toLocaleDateString("en-IN")}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="p-4 bg-gray-50 rounded-b-lg">
+              <Button variant="outline" className="w-full">
+                View All Deals
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Performance Insights */}
+      <Card className="mt-6 shadow-lg border-0 bg-gradient-to-r from-indigo-50 to-purple-50">
+        <CardContent className="p-6">
+          <div className="flex items-center mb-4">
+            <TrendingUpIcon className="w-6 h-6 text-indigo-600 mr-2" />
+            <h3 className="text-lg font-semibold text-gray-800">
+              Performance Insights
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <p className="text-2xl font-bold text-indigo-600">92%</p>
+              <p className="text-sm text-gray-600">Bid Acceptance Rate</p>
+            </div>
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <p className="text-2xl font-bold text-purple-600">4.2 days</p>
+              <p className="text-sm text-gray-600">Avg. Bid Duration</p>
+            </div>
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <p className="text-2xl font-bold text-green-600">₹1,847</p>
+              <p className="text-sm text-gray-600">Avg. Deal Value per Ton</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

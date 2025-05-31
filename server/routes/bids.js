@@ -46,15 +46,19 @@ router.get("/", verifyToken, allowRoles("staff", "admin"), async (req, res) => {
 router.post("/:id/accept", verifyToken, allowRoles("staff", "admin"), async (req, res) => {
     try {
         const { id } = req.params;
+        const { transporter_id } = req.body;
+
         const result = await pool.query(
-            "UPDATE bids SET status = 'accepted' WHERE id = $1 RETURNING *",
-            [id]
+            "UPDATE bids SET status = 'accepted', transporter_id = $1 WHERE id = $2 RETURNING *",
+            [transporter_id, id]
         );
+
         res.json(result.rows[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
+  
 
 // 📌 Close Bid
 router.post("/:id/close", verifyToken, allowRoles("staff", "admin"), async (req, res) => {
@@ -82,16 +86,19 @@ router.get("/:id/offers", verifyToken, allowRoles("staff", "admin"), async (req,
         // Mocked offers
         const mockOffers = [
             {
+                transporter_id: "1",
                 transporter: "ABC Logistics",
                 amount: 18000,
                 note: "Available tomorrow morning",
             },
             {
+                transporter_id: "2",
                 transporter: "QuickHaulers Pvt Ltd",
                 amount: 17500,
                 note: "Vehicle ready now",
             },
             {
+                transporter_id: "3",
                 transporter: "SpeedyTransports",
                 amount: 18500,
                 note: "Experienced with similar loads",

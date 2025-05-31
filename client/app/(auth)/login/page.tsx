@@ -25,13 +25,13 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
     try {
-      const {user} = await signInWithEmailAndPassword(auth, email, password);
+      const { user } = await signInWithEmailAndPassword(auth, email, password);
       const token = await user.getIdTokenResult();
       // Store token in localStorage or context as needed
       localStorage.setItem("token", token.token);
-      
+
       // console.log(token?.user?.);
-      router.push("/dashboard/bids");
+      router.push("/dashboard/bids/active");
     } catch (err) {
       setError("Invalid email or password");
       throw err;
