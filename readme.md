@@ -129,7 +129,7 @@ DB_URL=postgres://user:password@localhost:5432/database
 ```bash
 cd client
 npm install
-npm run dev
+npm run dev 
 ```
 
 #### `firebaseConfig.js` (frontend):
