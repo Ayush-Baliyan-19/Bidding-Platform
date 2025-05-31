@@ -82,7 +82,7 @@ export default function BidOffersDialog({
         `/bids/${bid.id}/accept`,
         {
           offerId: offer.id,
-          transporter_id: offer.transporter,
+          transporter_id: offer.transporter_id,
         },
         {
           headers: {

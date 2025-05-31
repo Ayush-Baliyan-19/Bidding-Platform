@@ -16,6 +16,7 @@ export type BidOffer = {
   id: number;
   bidId: number;
   transporter: string;
+  transporter_id: string;
   amount: number;
   note: string;
   status: string; // e.g., "pending", "accepted", "rejected"
