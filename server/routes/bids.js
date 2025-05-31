@@ -46,15 +46,19 @@ router.get("/", verifyToken, allowRoles("staff", "admin"), async (req, res) => {
 router.post("/:id/accept", verifyToken, allowRoles("staff", "admin"), async (req, res) => {
     try {
         const { id } = req.params;
+        const { transporter_id } = req.body;
+
         const result = await pool.query(
-            "UPDATE bids SET status = 'accepted' WHERE id = $1 RETURNING *",
-            [id]
+            "UPDATE bids SET status = 'accepted', transporter_id = $1 WHERE id = $2 RETURNING *",
+            [transporter_id, id]
         );
+
         res.json(result.rows[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
+  
 
 // 📌 Close Bid
 router.post("/:id/close", verifyToken, allowRoles("staff", "admin"), async (req, res) => {
@@ -69,6 +73,47 @@ router.post("/:id/close", verifyToken, allowRoles("staff", "admin"), async (req,
         res.status(500).json({ error: err.message });
     }
 });
+
+// 📌 Get Mocked Transporter Offers for a Bid
+router.get("/:id/offers", verifyToken, allowRoles("staff", "admin"), async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Optional: You can validate if bid exists
+        const bidCheck = await pool.query("SELECT * FROM bids WHERE id = $1", [id]);
+        if (bidCheck.rows.length === 0) return res.status(404).json({ error: "Bid not found" });
+
+        // Mocked offers
+        const mockOffers = [
+            {
+                transporter_id: "1",
+                transporter: "ABC Logistics",
+                amount: 18000,
+                note: "Available tomorrow morning",
+            },
+            {
+                transporter_id: "2",
+                transporter: "QuickHaulers Pvt Ltd",
+                amount: 17500,
+                note: "Vehicle ready now",
+            },
+            {
+                transporter_id: "3",
+                transporter: "SpeedyTransports",
+                amount: 18500,
+                note: "Experienced with similar loads",
+            }
+        ];
+
+        // Return mocked data
+        res.json(mockOffers);
+
+    } catch (err) {
+        console.error("Error getting offers:", err);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
 
 // Dummy function for base price prediction (replace later)
 async function calculateBasePrice(pickup, drop, quantity) {

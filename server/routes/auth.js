@@ -3,6 +3,40 @@ const router = express.Router();
 const admin = require("../config/firebase");
 const { verifyToken, allowRoles } = require("../middleware/auth");
 
+
+// Frontend routes by role
+const routesByRole = {
+    admin: [
+        "/dashboard",
+        "/dashboard/users",
+        "/dashboard/transporters",
+        "/dashboard/bids/active",
+        "/dashboard/bids/create",
+        "/dashboard/deals",
+        "/dashboard/deals/all-deals",
+        "/dashboard/deals/manual",
+        "/dashboard/deals/upload",
+        "/dashboard/transporters/create",
+        "/dashboard/users/manage",
+        "/dashboard/users/create",
+    ],
+    staff: [
+        "/dashboard",
+        "/dashboard/bids/active",
+        "/dashboard/bids/create",
+        "/dashboard/deals",
+        "/dashboard/deals/all-deals",
+        "/dashboard/deals/manual",
+        "/dashboard/deals/upload",
+    ],
+};
+
+// Get accessible frontend routes for logged-in user
+router.get("/routes", verifyToken, (req, res) => {
+    const role = req.user.role || req.user.customClaims?.role || "staff";
+    res.json({ routes: routesByRole[role] || [] });
+});
+
 // Get all users (Admin only)
 router.get("/users", verifyToken, allowRoles("admin"), async (req, res) => {
     try {
@@ -11,6 +45,8 @@ router.get("/users", verifyToken, allowRoles("admin"), async (req, res) => {
             uid: user.uid,
             email: user.email,
             role: user.customClaims?.role || "none",
+            createdAt: user.metadata.creationTime,
+            lastLogin: user.metadata.lastSignInTime
         }));
         res.json(users);
     } catch (err) {
